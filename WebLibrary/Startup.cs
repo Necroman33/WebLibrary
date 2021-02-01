@@ -20,7 +20,7 @@ namespace WebLibrary
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<WebLibraryContext>(opt =>
-                                               opt.UseInMemoryDatabase("TodoList"));
+                                               opt.UseInMemoryDatabase("WebLibrary"));
             services.AddControllers();
         }
 

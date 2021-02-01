@@ -158,3 +158,6 @@ C:\Users\Кирилл\source\repos\WebLibrary\WebLibrary\bin\Debug\net5.0\zh-Han
 C:\Users\Кирилл\source\repos\WebLibrary\WebLibrary\bin\Debug\net5.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\Кирилл\source\repos\WebLibrary\WebLibrary\bin\Debug\net5.0\runtimes\win-arm\lib\net5.0\dotnet-aspnet-codegenerator-design.exe
 C:\Users\Кирилл\source\repos\WebLibrary\WebLibrary\bin\Debug\net5.0\runtimes\win-arm64\lib\net5.0\dotnet-aspnet-codegenerator-design.exe
+C:\Users\Кирилл\source\repos\WebLibrary\WebLibrary\bin\Debug\net5.0\Application.exe
+C:\Users\Кирилл\source\repos\WebLibrary\WebLibrary\bin\Debug\net5.0\Application.dll
+C:\Users\Кирилл\source\repos\WebLibrary\WebLibrary\bin\Debug\net5.0\Application.pdb

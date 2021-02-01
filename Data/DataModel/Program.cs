@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Data.DataModel;
+using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleApp5
 {
