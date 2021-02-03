@@ -3,8 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Data;
 using Data.DataModel;
-using Application;
+using Library.Logic;
+using Library.Models;
 
 namespace WebApi.Controllers
 {
@@ -12,25 +14,25 @@ namespace WebApi.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-        private readonly Application.Logic _context;
+        private readonly Library.Logic.BookLogic BookLogic;
 
-        public BooksController(WebLibraryContext context)
+        public BooksController(LibraryContext context)
         {
-            _context = new Application.Logic(context);
-        } 
+            BookLogic = new Library.Logic.BookLogic(context);
+        }
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+        public async Task<IEnumerable<BookDto>> GetBooks()
         {
-            return await _context.GetBookList();
+            return await BookLogic.GetBookList();
         }
 
         // GET: api/Books/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(int id)
+        public async Task<ActionResult<BookDto>> GetBook(int id)
         {
-            var book = await _context.GetBookById(id);
+            var book = await BookLogic.GetBookById(id);
 
             if (book == null)
             {
@@ -43,49 +45,36 @@ namespace WebApi.Controllers
         // PUT: api/Books/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook(int id, Book book)
+        public async Task<IActionResult> PutBook(int id, BookDto book)
         {
+            book.Id = id;
+            var result = await BookLogic.ChangeBook(id, book);
 
-            if (id != book.Id)
+            if (result)
             {
-                return BadRequest();
-            }
-
-            var result = await _context.ChangeBook(id,book);
-
-            if (result == null)
-            {
-
-                return NotFound();
+                return Ok();
             }
             else
             {
-                if (result.Value)
-                {
-                    return Ok();
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                return BadRequest();
             }
         }
+
 
         // POST: api/Books
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Book>> PostBook(Book book)
+        public async Task<ActionResult<BookDto>> PostBook(BookDto book)
         {
-            
-            return await _context.AddBook(book);
+            return await BookLogic.AddBook(book);
         }
 
         // DELETE: api/Books/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
-            var result = await _context.DeleteBook(id);
-            if (result == null) 
+            var result = await BookLogic.DeleteBook(id);
+            if (result == false)
             {
                 return NotFound();
             }

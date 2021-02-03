@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Data.DataModel;
+using Data;
 
 namespace WebLibrary
 {
@@ -19,7 +19,7 @@ namespace WebLibrary
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<WebLibraryContext>(opt =>
+            services.AddDbContext<LibraryContext>(opt =>
                                                opt.UseInMemoryDatabase("WebLibrary"));
             services.AddControllers();
         }

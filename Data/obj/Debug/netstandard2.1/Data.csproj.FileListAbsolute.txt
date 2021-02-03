@@ -1,0 +1,9 @@
+C:\Users\Кирилл\source\repos\WebLibrary\Data\bin\Debug\netstandard2.1\Data.deps.json
+C:\Users\Кирилл\source\repos\WebLibrary\Data\bin\Debug\netstandard2.1\Data.dll
+C:\Users\Кирилл\source\repos\WebLibrary\Data\bin\Debug\netstandard2.1\Data.pdb
+C:\Users\Кирилл\source\repos\WebLibrary\Data\obj\Debug\netstandard2.1\Data.csprojAssemblyReference.cache
+C:\Users\Кирилл\source\repos\WebLibrary\Data\obj\Debug\netstandard2.1\Data.AssemblyInfoInputs.cache
+C:\Users\Кирилл\source\repos\WebLibrary\Data\obj\Debug\netstandard2.1\Data.AssemblyInfo.cs
+C:\Users\Кирилл\source\repos\WebLibrary\Data\obj\Debug\netstandard2.1\Data.csproj.CoreCompileInputs.cache
+C:\Users\Кирилл\source\repos\WebLibrary\Data\obj\Debug\netstandard2.1\Data.dll
+C:\Users\Кирилл\source\repos\WebLibrary\Data\obj\Debug\netstandard2.1\Data.pdb
