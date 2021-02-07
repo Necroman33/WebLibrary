@@ -19,18 +19,16 @@ namespace Library.Logic
             _context = context;
         }
 
-        public async Task<IEnumerable<BookDto>> GetBookList()
+        public async Task<IEnumerable<Book>> GetBookList()
         {
-            var books = _context.Books.ToList();
-            return DtoConvert.GetBookListDto(books);
+            return _context.Books.ToList();
         }
 
-        public async Task<BookDto> GetBookById(int id)
+        public async Task<Book> GetBookById(int id)
         {
             try
             {
-                var book = _context.Books.First(b => b.Id == id);
-                return DtoConvert.GetBookDto(book);
+                return _context.Books.First(b => b.Id == id);
             }
             catch 
             {
@@ -56,12 +54,11 @@ namespace Library.Logic
              }
         }
 
-        public async Task<BookDto> AddBook(BookDto book)
+        public async Task<Book> AddBook(BookDto book)
         {
-            _context.Books.Add(DtoConvert.AddBookDto(book));
+            _context.Books.Add(DtoConvert.BookFromDtoBook(book));
             await _context.SaveChangesAsync();
-            book.Id = _context.Books.Last().Id;
-            return book;
+            return _context.Books.Last();
         }
         public async Task<bool> DeleteBook(int id)
         {

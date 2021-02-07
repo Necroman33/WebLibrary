@@ -25,7 +25,13 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<IEnumerable<BookDto>> GetBooks()
         {
-            return await BookLogic.GetBookList();
+            var books = await BookLogic.GetBookList();
+            var booksDto = new List<BookDto>();
+            foreach (Book book in books)
+            {
+                booksDto.Add(DtoConvert.BookDtoFromBook(book));
+            }
+            return booksDto;
         }
 
         // GET: api/Books/5
@@ -39,7 +45,7 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
-            return book;
+            return DtoConvert.BookDtoFromBook(book);
         }
 
         // PUT: api/Books/5
@@ -66,7 +72,8 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<BookDto>> PostBook(BookDto book)
         {
-            return await BookLogic.AddBook(book);
+            var addedBook = await BookLogic.AddBook(book);
+            return DtoConvert.BookDtoFromBook(addedBook);
         }
 
         // DELETE: api/Books/5

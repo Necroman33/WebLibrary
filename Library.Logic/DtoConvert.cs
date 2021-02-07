@@ -9,21 +9,7 @@ namespace Library.Logic
 {
     public class DtoConvert
     {
-        public static IEnumerable<BookDto> GetBookListDto(List<Book> books)
-        {
-            var BookList = books.Select(b =>
-            new BookDto
-            {
-                Id = b.Id,
-                Author = b.Author,
-                Description = b.Description,
-                ShortDescription = b.ShortDescription,
-                Title = b.Title
-            });
-            return BookList;
-        }
-
-        public static BookDto GetBookDto(Book book)
+        public static BookDto BookDtoFromBook(Book book)
         {
             var Book = new BookDto
             {
@@ -36,7 +22,7 @@ namespace Library.Logic
             return Book;
         }
 
-        public static Book AddBookDto(BookDto book)
+        public static Book BookFromDtoBook(BookDto book)
         {
             var Book = new Book
             {
