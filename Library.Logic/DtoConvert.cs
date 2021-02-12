@@ -17,9 +17,21 @@ namespace Library.Logic
                 Title = book.Title,
                 Author = book.Author,
                 Description = book.Description,
-                ShortDescription = book.ShortDescription
+                ShortDescription = book.ShortDescription,
+                PublicationDate = book.PublicationDate,
+                AverageRating = book.AverageRating,
+                Status = book.Status,
+                Tags = new List<Tag>()
             };
-            return Book;
+            if (book.BookTags!=null) {
+                foreach (BookTag bookTag in book.BookTags)
+                {
+                    Book.Tags.Add(new Tag {
+                        Id = bookTag.TagId,
+                        TagName = bookTag.Tag.TagName,
+                    });
+                } }
+                return Book;
         }
 
         public static Book BookFromDtoBook(BookDto book)
@@ -30,8 +42,23 @@ namespace Library.Logic
                 Title = book.Title,
                 Author = book.Author,
                 Description = book.Description,
-                ShortDescription = book.ShortDescription
+                ShortDescription = book.ShortDescription,
+                PublicationDate = book.PublicationDate,
+                AverageRating = book.AverageRating,
+                Status = book.Status,
+                BookTags = new List<BookTag>()
             };
+           /* if (book.Tags != null)
+            {
+                foreach (Tag tags in book.Tags)
+                {
+                    Book.BookTags.Add(new BookTag
+                    {
+                        BookId = book.Id,
+                        TagId = tags.Id,
+                    });
+                }
+            }*/
             return Book;
         }
     }

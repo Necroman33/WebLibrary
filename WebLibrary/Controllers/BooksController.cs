@@ -65,8 +65,6 @@ namespace WebApi.Controllers
                 return BadRequest();
             }
         }
-
-
         // POST: api/Books
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

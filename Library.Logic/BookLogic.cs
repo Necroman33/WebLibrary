@@ -49,6 +49,17 @@ namespace Library.Logic
                 currBook.Author = book.Author;
                 currBook.Description = book.Description;
                 currBook.ShortDescription = book.ShortDescription;
+                currBook.PublicationDate = book.PublicationDate;
+                currBook.AverageRating = book.AverageRating;
+                currBook.Status = book.Status;
+                ///currBook.Genres = book.Genres;
+                foreach (Tag tag in book.Tags)
+               {
+                    var currTag = _context.Tags.First(t => t.TagName == tag.TagName);
+                    currBook.BookTags.Add(new BookTag { 
+                    Tag = currTag
+                    });
+               }
                 await _context.SaveChangesAsync();
                 return true;
              }
@@ -56,7 +67,14 @@ namespace Library.Logic
 
         public async Task<Book> AddBook(BookDto book)
         {
-            _context.Books.Add(DtoConvert.BookFromDtoBook(book));
+            var currentBook = DtoConvert.BookFromDtoBook(book);
+            foreach (Tag tags in book.Tags)
+            {
+                var currTag = _context.Tags.First(t => t.TagName == tags.TagName);
+                tags.Id = currTag.Id;
+                currentBook.Tags.Add(currTag);
+            }
+            _context.Books.Add(currentBook);
             await _context.SaveChangesAsync();
             return _context.Books.Last();
         }
