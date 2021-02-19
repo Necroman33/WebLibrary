@@ -8,7 +8,6 @@ namespace Data.DataModel
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public string Author { get; set; }
         public string ShortDescription { get; set; }
         public string Description { get; set; }
         public DateTime PublicationDate { get; set; }
@@ -16,8 +15,11 @@ namespace Data.DataModel
         public string Status { get; set; }
 
 
-        public List<Genre> Genres { get; set; }
+        public int AuthorId { get; set; }
+        public Author Author { get; set; }
+
+        public List<BookGenre> BookGenres { get; set; } = new List<BookGenre>();
         public List<BookTag> BookTags { get; set; } = new List<BookTag>();
-        public List<Tag> Tags { get; set; } = new List<Tag>();
+        public List<BookSeries> BookSeries { get; set; } = new List<BookSeries>();
     }
 }

@@ -18,7 +18,8 @@ namespace Library.Models
         public string Status { get; set; }
 
 
-        public List<Genre> Genres { get; set; }
-        public List<Tag> Tags { get; set; }
+        public List<String> Genres { get; set; } = new List<String>();
+        public List<String> Tags { get; set; } = new List<String>();
+        public List<String> Series { get; set; } = new List<String>();
     }
 }

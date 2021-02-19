@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Data;
 using Data.DataModel;
+using Library.Logic;
+using Library.Logic.Models;
 
 namespace WebApi.Controllers
 {
@@ -14,32 +16,38 @@ namespace WebApi.Controllers
     [ApiController]
     public class TagsController : ControllerBase
     {
-        private readonly LibraryContext _context;
+        private readonly Library.Logic.TagLogic TagLogic;
 
         public TagsController(LibraryContext context)
         {
-            _context = context;
+            TagLogic = new Library.Logic.TagLogic(context);
         }
 
         // GET: api/Tags
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Tag>>> GetTags()
+        public async Task<IEnumerable<TagDto>> GetTags()
         {
-            return await _context.Tags.ToListAsync();
+            var tags = await TagLogic.GetTagList();
+            var tagDto = new List<TagDto>();
+            foreach (Tag tag in tags)
+            {
+                tagDto.Add(DtoConvert.TagDtoFromTag(tag));
+            }
+            return tagDto;
         }
 
         // GET: api/Tags/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Tag>> GetTag(int id)
+        public async Task<ActionResult<TagDto>> GetTag(int id)
         {
-            var tag = await _context.Tags.FindAsync(id);
+            var tag = await TagLogic.GetTagById(id);
 
             if (tag == null)
             {
                 return NotFound();
             }
 
-            return tag;
+            return DtoConvert.TagDtoFromTag(tag);
         }
 
         // PUT: api/Tags/5
@@ -47,62 +55,40 @@ namespace WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTag(int id, Tag tag)
         {
-            if (id != tag.Id)
+            var result = await TagLogic.ChangeTag(id, tag.TagName);
+
+            if (result)
+            {
+                return Ok();
+            }
+            else
             {
                 return BadRequest();
             }
-
-            _context.Entry(tag).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TagExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
         }
 
         // POST: api/Tags
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Tag>> PostTag(Tag tag)
+        public async Task<TagDto> PostTag(Tag tag)
         {
-            _context.Tags.Add(tag);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTag", new { id = tag.Id }, tag);
+            var addedTag = await TagLogic.AddTag(tag.TagName);
+            return DtoConvert.TagDtoFromTag(addedTag); ;
         }
 
         // DELETE: api/Tags/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTag(int id)
         {
-            var tag = await _context.Tags.FindAsync(id);
-            if (tag == null)
+            var result = await TagLogic.DeleteTag(id);
+            if (result == false)
             {
                 return NotFound();
             }
-
-            _context.Tags.Remove(tag);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool TagExists(int id)
-        {
-            return _context.Tags.Any(e => e.Id == id);
+            else
+            {
+                return Ok();
+            }
         }
     }
 }

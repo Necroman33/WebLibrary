@@ -11,6 +11,5 @@ namespace Data.DataModel
 
 
         public List<BookTag> BookTags { get; set; } = new List<BookTag>();
-        public List<Book> Books { get; set; } = new List<Book>();
     }
 }

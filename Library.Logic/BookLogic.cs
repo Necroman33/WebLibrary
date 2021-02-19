@@ -19,16 +19,65 @@ namespace Library.Logic
             _context = context;
         }
 
+
+        private Book BookFromDtoBook(BookDto book)
+        {
+            var Book = new Book
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Description = book.Description,
+                ShortDescription = book.ShortDescription,
+                PublicationDate = book.PublicationDate,
+                AverageRating = book.AverageRating,
+                Status = book.Status,
+            };
+            Book.Author = _context.Authors.First(a => a.FIO == book.Author);
+            foreach (String tag in book.Tags)
+            {
+                var currTag = _context.Tags.First(t => t.TagName == tag);
+                Book.BookTags.Add(new BookTag
+                {
+                    Tag = currTag
+                });
+            }
+            foreach (string genre in book.Genres)
+            {
+                var currGenre = _context.Genres.First(g => g.GenreName == genre);
+                Book.BookGenres.Add(new BookGenre
+                {
+                    Genre = currGenre
+                });
+            }
+            foreach (string series in book.Series)
+            {
+                var currSeries = _context.Series.First(s => s.SeriesName == series);
+                Book.BookSeries.Add(new BookSeries
+                {
+                    Series = currSeries
+                });
+            }
+            return Book;
+        }
+
         public async Task<IEnumerable<Book>> GetBookList()
         {
-            return _context.Books.ToList();
+            return _context.Books
+                .Include(b => b.BookTags).ThenInclude(bt => bt.Tag)
+                .Include(b => b.BookGenres).ThenInclude(bg => bg.Genre)
+                .Include(b => b.BookSeries).ThenInclude(bg => bg.Series)
+                .ToList();
         }
 
         public async Task<Book> GetBookById(int id)
         {
             try
             {
-                return _context.Books.First(b => b.Id == id);
+                return _context.Books
+                    .Include(b => b.BookTags).ThenInclude(bt => bt.Tag)
+                    .Include(b => b.BookGenres).ThenInclude(bg => bg.Genre)
+                    .Include(b => b.BookSeries).ThenInclude(bg => bg.Series)
+                    .First(b => b.Id == id);
             }
             catch 
             {
@@ -44,22 +93,54 @@ namespace Library.Logic
                 }
              else
              {
-                var currBook = _context.Books.First(b => b.Id == id);
+                var currBook = _context.Books
+                    .Include(b => b.BookTags).ThenInclude(bt => bt.Tag)
+                    .Include(b => b.BookGenres).ThenInclude(bg => bg.Genre)
+                    .Include(b => b.BookSeries).ThenInclude(bg => bg.Series)
+                    .First(b => b.Id == id);
+
                 currBook.Title = book.Title;
-                currBook.Author = book.Author;
+                currBook.Author = _context.Authors.First(a => a.FIO == book.Author);
                 currBook.Description = book.Description;
                 currBook.ShortDescription = book.ShortDescription;
                 currBook.PublicationDate = book.PublicationDate;
                 currBook.AverageRating = book.AverageRating;
                 currBook.Status = book.Status;
-                ///currBook.Genres = book.Genres;
-                foreach (Tag tag in book.Tags)
-               {
-                    var currTag = _context.Tags.First(t => t.TagName == tag.TagName);
-                    currBook.BookTags.Add(new BookTag { 
-                    Tag = currTag
-                    });
-               }
+                if (book.Tags!=null) 
+                {
+                    currBook.BookTags = new List<BookTag>();
+                    foreach (String tag in book.Tags)
+                    {
+                        var currTag = _context.Tags.First(t => t.TagName == tag);
+                        currBook.BookTags.Add(new BookTag {
+                            Tag = currTag
+                        });
+                    }
+                }
+                if (book.Genres != null)
+                {
+                    currBook.BookGenres = new List<BookGenre>();
+                    foreach (String genre in book.Genres)
+                    {
+                        var currGenre = _context.Genres.First(t => t.GenreName == genre);
+                        currBook.BookGenres.Add(new BookGenre
+                        {
+                            Genre = currGenre
+                        });
+                    }
+                }
+                if (book.Series != null)
+                {
+                    currBook.BookSeries = new List<BookSeries>();
+                    foreach (String series in book.Series)
+                    {
+                        var currSeries = _context.Series.First(t => t.SeriesName == series);
+                        currBook.BookSeries.Add(new BookSeries
+                        {
+                            Series = currSeries
+                        });
+                    }
+                }
                 await _context.SaveChangesAsync();
                 return true;
              }
@@ -67,16 +148,10 @@ namespace Library.Logic
 
         public async Task<Book> AddBook(BookDto book)
         {
-            var currentBook = DtoConvert.BookFromDtoBook(book);
-            foreach (Tag tags in book.Tags)
-            {
-                var currTag = _context.Tags.First(t => t.TagName == tags.TagName);
-                tags.Id = currTag.Id;
-                currentBook.Tags.Add(currTag);
-            }
+            var currentBook = BookFromDtoBook(book);
             _context.Books.Add(currentBook);
             await _context.SaveChangesAsync();
-            return _context.Books.Last();
+            return currentBook;
         }
         public async Task<bool> DeleteBook(int id)
         {

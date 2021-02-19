@@ -1,4 +1,5 @@
 ﻿using Data.DataModel;
+using Library.Logic.Models;
 using Library.Models;
 using System;
 using System.Collections.Generic;
@@ -15,51 +16,105 @@ namespace Library.Logic
             {
                 Id = book.Id,
                 Title = book.Title,
-                Author = book.Author,
+                Author = book.Author.FIO,
                 Description = book.Description,
                 ShortDescription = book.ShortDescription,
                 PublicationDate = book.PublicationDate,
                 AverageRating = book.AverageRating,
                 Status = book.Status,
-                Tags = new List<Tag>()
             };
             if (book.BookTags!=null) {
                 foreach (BookTag bookTag in book.BookTags)
                 {
-                    Book.Tags.Add(new Tag {
-                        Id = bookTag.TagId,
-                        TagName = bookTag.Tag.TagName,
-                    });
+                    Book.Tags.Add(bookTag.Tag.TagName);
                 } }
-                return Book;
+            if (book.BookGenres != null)
+            {
+                foreach (BookGenre bookGenre in book.BookGenres)
+                {
+                    Book.Genres.Add(bookGenre.Genre.GenreName);
+                }
+            }
+            if (book.BookSeries != null)
+            {
+                foreach (BookSeries bookSeries in book.BookSeries)
+                {
+                    Book.Series.Add(bookSeries.Series.SeriesName);
+                }
+            }
+            return Book;
         }
 
-        public static Book BookFromDtoBook(BookDto book)
+        public static TagDto TagDtoFromTag(Tag tag)
         {
-            var Book = new Book
+            var Tag = new TagDto
             {
-                Id = book.Id,
-                Title = book.Title,
-                Author = book.Author,
-                Description = book.Description,
-                ShortDescription = book.ShortDescription,
-                PublicationDate = book.PublicationDate,
-                AverageRating = book.AverageRating,
-                Status = book.Status,
-                BookTags = new List<BookTag>()
+                Id = tag.Id,
+                TagName = tag.TagName
             };
-           /* if (book.Tags != null)
+            if (tag.BookTags != null)
             {
-                foreach (Tag tags in book.Tags)
+                foreach (BookTag bookTag in tag.BookTags)
                 {
-                    Book.BookTags.Add(new BookTag
-                    {
-                        BookId = book.Id,
-                        TagId = tags.Id,
-                    });
+                    Tag.Books.Add(bookTag.Book.Title);
                 }
-            }*/
-            return Book;
+            }
+            return Tag;
+        }
+        public static GenreDto GenreDtoFromGenre(Genre genre)
+        {
+            var Genre = new GenreDto
+            {
+                Id = genre.Id,
+                GenreName = genre.GenreName
+            };
+            if (genre.BookGenres != null)
+            {
+                foreach (BookGenre bookGenre in genre.BookGenres)
+                {
+                    Genre.Books.Add(bookGenre.Book.Title);
+                }
+            }
+            return Genre;
+        }
+
+        public static SeriesDto SeriesDtoFromSeries(Series series)
+        {
+            var Series = new SeriesDto
+            {
+                Id = series.Id,
+                SeriesName = series.SeriesName
+            };
+            if (series.BookSeries != null)
+            {
+                foreach (BookSeries bookSeries in series.BookSeries)
+                {
+                    Series.Books.Add(bookSeries.Book.Title);
+                }
+            }
+            return Series;
+        }
+        public static AuthorDto AuthorDtoFromAuthor(Author author)
+        {
+            var Author = new AuthorDto
+            {
+                Id = author.Id,
+                FIO = author.FIO,
+                Name = author.Name,
+                Surname = author.Surname,
+                Middlename = author.Middlename,
+                YearsOfLife = author.YearsOfLife,
+                BirthPlace = author.BirthPlace,
+                Biography = author.Biography,
+            };
+            if (author.Books != null)
+            {
+                foreach (Book book in author.Books)
+                {
+                    Author.Books.Add(book.Title);
+                }
+            }
+            return Author;
         }
     }
 }

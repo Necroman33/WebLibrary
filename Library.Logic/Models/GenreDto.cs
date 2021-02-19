@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Data.DataModel
+namespace Library.Logic.Models
 {
-    public class Genre
+    public class GenreDto
     {
         public int Id { get; set; }
         public string GenreName { get; set; }
 
 
-        public List<BookGenre> BookGenres { get; set; } = new List<BookGenre>();
+        public List<String> Books { get; set; } = new List<String>();
     }
 }
