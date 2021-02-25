@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Data;
 using Data.DataModel;
+using Library.Logic.Models;
+using Library.Logic;
 
 namespace WebApi.Controllers
 {
@@ -14,95 +16,93 @@ namespace WebApi.Controllers
     [ApiController]
     public class AuthorsController : ControllerBase
     {
-        private readonly LibraryContext _context;
+        private readonly Library.Logic.AuthorLogic AuthorLogic;
 
         public AuthorsController(LibraryContext context)
         {
-            _context = context;
+            AuthorLogic = new Library.Logic.AuthorLogic(context);
         }
 
         // GET: api/Authors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
+        public async Task<IEnumerable<AuthorDto>> GetAuthors()
         {
-            return await _context.Authors.ToListAsync();
+            var authors = await AuthorLogic.GetAuthorList();
+            var authorDto = new List<AuthorDto>();
+            foreach(Author author in authors)
+            {
+                authorDto.Add(DtoConvert.AuthorDtoFromAuthor(author));
+            }
+            return authorDto;
         }
 
         // GET: api/Authors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Author>> GetAuthor(int id)
+        public async Task<ActionResult<AuthorDto>> GetAuthor(int id)
         {
-            var author = await _context.Authors.FindAsync(id);
+            var author = await AuthorLogic.GetAuthorById(id);
 
             if (author == null)
             {
                 return NotFound();
             }
 
-            return author;
+            return DtoConvert.AuthorDtoFromAuthor(author);
+        }
+
+        // GET: api/Authors/ByFIO/Aleksandr
+        [HttpGet("ByFIO/{fio}")]
+        public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAuthorыByFIO(string fio)
+        {
+            var authors = await AuthorLogic.GetAuthorsByFIO(fio);
+            var authorDto = new List<AuthorDto>();
+            foreach (Author author in authors)
+            {
+                authorDto.Add(DtoConvert.AuthorDtoFromAuthor(author));
+            }
+            return authorDto;
         }
 
         // PUT: api/Authors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAuthor(int id, Author author)
+        public async Task<IActionResult> PutAuthor(int id, AuthorDto author)
         {
-            if (id != author.Id)
+            author.Id = id;
+            var result = await AuthorLogic.ChangeAuthor(id, author);
+
+            if (result)
+            {
+                return Ok();
+            }
+            else
             {
                 return BadRequest();
             }
-
-            _context.Entry(author).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AuthorExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
         }
 
         // POST: api/Authors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Author>> PostAuthor(Author author)
+        public async Task<ActionResult<AuthorDto>> PostAuthor(AuthorDto author)
         {
-            _context.Authors.Add(author);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetAuthor", new { id = author.Id }, author);
+            var addedAuthor = await AuthorLogic.AddAuthor(author);
+            return DtoConvert.AuthorDtoFromAuthor(addedAuthor);
         }
 
         // DELETE: api/Authors/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAuthor(int id)
         {
-            var author = await _context.Authors.FindAsync(id);
-            if (author == null)
+            var result = await AuthorLogic.DeleteAuthor(id);
+            if (result == false)
             {
                 return NotFound();
             }
-
-            _context.Authors.Remove(author);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool AuthorExists(int id)
-        {
-            return _context.Authors.Any(e => e.Id == id);
+            else
+            {
+                return Ok();
+            }
         }
     }
 }

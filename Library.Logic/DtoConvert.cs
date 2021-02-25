@@ -16,7 +16,6 @@ namespace Library.Logic
             {
                 Id = book.Id,
                 Title = book.Title,
-                Author = book.Author.FIO,
                 Description = book.Description,
                 ShortDescription = book.ShortDescription,
                 PublicationDate = book.PublicationDate,
@@ -41,6 +40,10 @@ namespace Library.Logic
                 {
                     Book.Series.Add(bookSeries.Series.SeriesName);
                 }
+            }
+            if (book.Author != null)
+            {
+                Book.Author = book.Author.FIO; 
             }
             return Book;
         }
@@ -103,7 +106,8 @@ namespace Library.Logic
                 Name = author.Name,
                 Surname = author.Surname,
                 Middlename = author.Middlename,
-                YearsOfLife = author.YearsOfLife,
+                Birthday = author.Birthday,
+                Deathday = author.Deathday,
                 BirthPlace = author.BirthPlace,
                 Biography = author.Biography,
             };

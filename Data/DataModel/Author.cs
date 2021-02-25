@@ -11,7 +11,8 @@ namespace Data.DataModel
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Middlename { get; set; }
-        public string YearsOfLife { get; set; }
+        public DateTime Birthday { get; set; }
+        public DateTime Deathday { get; set; }
         public string BirthPlace { get; set; }
         public string Biography { get; set; }
 

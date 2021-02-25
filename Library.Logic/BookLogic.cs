@@ -20,7 +20,7 @@ namespace Library.Logic
         }
 
 
-        private Book BookFromDtoBook(BookDto book)
+        private Book BookFromBookDto(BookDto book)
         {
             var Book = new Book
             {
@@ -32,7 +32,10 @@ namespace Library.Logic
                 AverageRating = book.AverageRating,
                 Status = book.Status,
             };
-            Book.Author = _context.Authors.First(a => a.FIO == book.Author);
+            if (book.Author != null)
+            {
+                Book.Author = _context.Authors.First(a => a.FIO == book.Author);
+            }
             foreach (String tag in book.Tags)
             {
                 var currTag = _context.Tags.First(t => t.TagName == tag);
@@ -66,6 +69,7 @@ namespace Library.Logic
                 .Include(b => b.BookTags).ThenInclude(bt => bt.Tag)
                 .Include(b => b.BookGenres).ThenInclude(bg => bg.Genre)
                 .Include(b => b.BookSeries).ThenInclude(bg => bg.Series)
+                .Include(b=>b.Author)
                 .ToList();
         }
 
@@ -77,6 +81,7 @@ namespace Library.Logic
                     .Include(b => b.BookTags).ThenInclude(bt => bt.Tag)
                     .Include(b => b.BookGenres).ThenInclude(bg => bg.Genre)
                     .Include(b => b.BookSeries).ThenInclude(bg => bg.Series)
+                    .Include(b => b.Author)
                     .First(b => b.Id == id);
             }
             catch 
@@ -97,6 +102,7 @@ namespace Library.Logic
                     .Include(b => b.BookTags).ThenInclude(bt => bt.Tag)
                     .Include(b => b.BookGenres).ThenInclude(bg => bg.Genre)
                     .Include(b => b.BookSeries).ThenInclude(bg => bg.Series)
+                    .Include(b=>b.Author)
                     .First(b => b.Id == id);
 
                 currBook.Title = book.Title;
@@ -148,7 +154,7 @@ namespace Library.Logic
 
         public async Task<Book> AddBook(BookDto book)
         {
-            var currentBook = BookFromDtoBook(book);
+            var currentBook = BookFromBookDto(book);
             _context.Books.Add(currentBook);
             await _context.SaveChangesAsync();
             return currentBook;
