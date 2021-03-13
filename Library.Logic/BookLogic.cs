@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Library.Logic
@@ -85,6 +86,98 @@ namespace Library.Logic
                     .First(b => b.Id == id);
             }
             catch 
+            {
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<Book>> GetBookByPharam(string value, string type)
+        {
+            try
+            {
+                var BookList = _context.Books
+                    .Include(b => b.BookTags).ThenInclude(bt => bt.Tag)
+                    .Include(b => b.BookGenres).ThenInclude(bg => bg.Genre)
+                    .Include(b => b.BookSeries).ThenInclude(bg => bg.Series)
+                    .Include(b => b.Author)
+                    .ToList();
+                var filtratedBooks = new List<Book>();
+                Regex regex = new Regex(@$"(\w*){value}(\w*)");
+                switch (type)
+                {
+                    case "title":
+                        foreach (Book book in BookList)
+                        {
+                            if (regex.IsMatch(book.Title))
+                            {
+                                filtratedBooks.Add(book);
+                            }
+                        }
+                        break;
+                    case "author":
+                        foreach (Book book in BookList)
+                        {
+                            if (regex.IsMatch(book.Author.FIO))
+                            {
+                                filtratedBooks.Add(book);
+                            }
+                        }
+                        break;
+                    case "series":
+                        foreach (Book book in BookList)
+                        {
+                            bool flag = false;
+                            foreach(BookSeries series in book.BookSeries)
+                            {
+                                if (regex.IsMatch(series.Series.SeriesName)&&flag==false)
+                                {
+                                    filtratedBooks.Add(book);
+                                    flag = true;
+                                }
+                            }
+                        }
+                        break;
+                    case "publicationYear":
+                        foreach (Book book in BookList)
+                        {
+                            if (book.PublicationDate.Year == Convert.ToInt32(value))
+                            {
+                                filtratedBooks.Add(book);
+                            }
+                        }
+                        break;
+                    case "genre":
+                        foreach (Book book in BookList)
+                        {
+                            bool flag = false;
+                            foreach (BookGenre genre in book.BookGenres)
+                            {
+                                if (regex.IsMatch(genre.Genre.GenreName) && flag == false)
+                                {
+                                    filtratedBooks.Add(book);
+                                    flag = true;
+                                }
+                            }
+                        }
+                        break;
+                    case "tag":
+                        foreach (Book book in BookList)
+                        {
+                            bool flag = false;
+                            foreach (BookTag tag in book.BookTags)
+                            {
+                                if (regex.IsMatch(tag.Tag.TagName) && flag == false)
+                                {
+                                    filtratedBooks.Add(book);
+                                    flag = true;
+                                }
+                            }
+                        }
+                        break;
+                }
+                return filtratedBooks;
+            }
+            catch
             {
                 return null;
             }

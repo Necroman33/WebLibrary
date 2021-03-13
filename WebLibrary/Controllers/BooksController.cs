@@ -7,6 +7,7 @@ using Data;
 using Data.DataModel;
 using Library.Logic;
 using Library.Models;
+using System;
 
 namespace WebApi.Controllers
 {
@@ -46,6 +47,79 @@ namespace WebApi.Controllers
             }
 
             return DtoConvert.BookDtoFromBook(book);
+        }
+
+        // GET: api/Books/ByTitle/Harry Potter
+        [HttpGet("ByTitle/{title}")]
+        public async Task<IEnumerable<BookDto>> GetBookByTitle(string title)
+        {
+            var books = await BookLogic.GetBookByPharam(title,"title");
+            var booksDto = new List<BookDto>();
+            foreach (Book book in books)
+            {
+                booksDto.Add(DtoConvert.BookDtoFromBook(book));
+            }
+            return booksDto;
+        }
+        // GET: api/Books/ByAuthor/Petya
+        [HttpGet("ByAuthor/{Author}")]
+        public async Task<IEnumerable<BookDto>> GetBookByAuthor(string author)
+        {
+            var books = await BookLogic.GetBookByPharam(author, "author");
+            var booksDto = new List<BookDto>();
+            foreach (Book book in books)
+            {
+                booksDto.Add(DtoConvert.BookDtoFromBook(book));
+            }
+            return booksDto;
+        }
+        // GET: api/Books/BySeries/school
+        [HttpGet("BySeries/{Series}")]
+        public async Task<IEnumerable<BookDto>> GetBookBySeries(string Series)
+        {
+            var books = await BookLogic.GetBookByPharam(Series,"series");
+            var booksDto = new List<BookDto>();
+            foreach (Book book in books)
+            {
+                booksDto.Add(DtoConvert.BookDtoFromBook(book));
+            }
+            return booksDto;
+        }
+        // GET: api/Books/ByPublicationYear/2001
+        [HttpGet("ByPublicationYear/{PublicationYear}")]
+        public async Task<IEnumerable<BookDto>> GetBookByPublicationDate(string PublicationYear)
+        {
+            var books = await BookLogic.GetBookByPharam(PublicationYear, "publicationYear");
+            var booksDto = new List<BookDto>();
+            foreach (Book book in books)
+            {
+                booksDto.Add(DtoConvert.BookDtoFromBook(book));
+            }
+            return booksDto;
+        }
+        // GET: api/Books/ByGenre/Horror
+        [HttpGet("ByGenre/{Genre}")]
+        public async Task<IEnumerable<BookDto>> GetBookByGenre(string genre)
+        {
+            var books = await BookLogic.GetBookByPharam(genre, "genre");
+            var booksDto = new List<BookDto>();
+            foreach (Book book in books)
+            {
+                booksDto.Add(DtoConvert.BookDtoFromBook(book));
+            }
+            return booksDto;
+        }
+        // GET: api/Books/ByTag/marked
+        [HttpGet("ByTag/{Tag}")]
+        public async Task<IEnumerable<BookDto>> GetBookByTag(string tag)
+        {
+            var books = await BookLogic.GetBookByPharam(tag, "tag");
+            var booksDto = new List<BookDto>();
+            foreach (Book book in books)
+            {
+                booksDto.Add(DtoConvert.BookDtoFromBook(book));
+            }
+            return booksDto;
         }
 
         // PUT: api/Books/5
